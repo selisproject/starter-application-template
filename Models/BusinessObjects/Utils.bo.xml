@@ -1,0 +1,1049 @@
+<!--
+Copyright (c) CLMS. All rights reserved.
+Licensed under the AGPL-3.0 license. See LICENSE file in the project root for full license information.-->
+
+<BusinessObject Model_Name="Utils" Model_Description="" Model_Creator="">
+  <Associations />
+  <Classes>
+    <Class ModelName="Utils" Name="Utils" ShadowModel="" ShadowClass="" Description="" Stereotype="Class" PK="" ConcurencyControl="false" AutoAssignPrimaryKey="false" IdGeneratorType="HiLoGenerator" IsPersisted="false" IsStatic="false" BaseClass="" BaseClasses="" BaseModel="">
+      <DiagramInfo IsExpanded="true" Width="180" Height="180" Top="30" Left="60" />
+      <Attributes />
+      <Operations>
+        <Operation Name="RaymetricsCSVParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function void RaymetricsCSVParser(string path, int transactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("raymetrics")) 
+ 	{
+ 	    return;
+ 	}      
+		DebugLib.Logger.WriteWarnLine("raymetrics File Import");
+		
+		int rowCount = 0;
+		int test = 0;
+		Array[string] entries;
+		Array[string] orderEntries;
+		
+//		Domain.CommercialAgreement commercialAgreement;
+		Domain.Transaction transaction = Domain.Transaction.GetByKey(transactionId);
+		Domain.ImportedBuyer newImportedBuyer;
+		Collection[Domain.Order] orders;
+		Collection[Domain.Invoice] invoices;
+		
+		//Supplier is raymetrics
+//		commercialAgreement.Supplier = Domain.Supplier.Find(a=&gt; a.UserName == "Supplier15").First();
+		    
+		Collection[string] delim;
+		delim.Add("\r");
+		delim.Add("\n");
+		
+		foreach (string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true)) 
+		{
+		    //DebugLib.Logger.WriteWarnLine("--------&gt;" + row + "&lt;---------");
+		    if (string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+		    {
+		        continue;
+		    }    
+        	entries = row.Split(';');
+	        if(! (entries.Length &gt; 0)) 
+	        {
+	            continue;
+        	}    
+    	    if (entries.Get(0).StartsWith("Πελάτης")) 
+    	    {
+               newImportedBuyer.Code = entries.Get(1);
+    	       DebugLib.Logger.WriteWarnLine("Customer is " + newImportedBuyer.Code);
+    	       //commercialAgreement.ImportedBuyers.Add(newImportedBuyer);
+			}
+        	//for the orders - inv
+	        if (rowCount &gt; 0) 
+	        {
+				DebugLib.Logger.WriteInfoLine("order----&gt; " + row);
+				
+				orderEntries = row.Split(';');
+				
+				if(orderEntries.Get(2).StartsWith("ΤΔΑ-Χ")) 
+				{
+					Domain.Invoice inv;
+					inv.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+					inv.InvoiceNumber = orderEntries.Get(3);
+					inv.Description = orderEntries.Get(5);
+					//inv.Amount = decimal.Parse(orderEntries.Get(9));
+					//inv.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+					invoices.Add(inv);
+				
+					Domain.Order order;
+					order.DateOfOrder = DateTime.ParseExact(orderEntries.Get(0),"dd/MM/yyyy");
+					order.OrderNumber = orderEntries.Get(4);
+					order.Invoices = invoices;
+					orders.Add(order);
+					
+				} 
+				elseif(orderEntries.Get(2).StartsWith("EU-INV")) 
+				{
+					Domain.Invoice inv;
+					inv.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+					inv.InvoiceNumber = orderEntries.Get(3);
+					inv.Description = orderEntries.Get(5);
+					//inv.Amount = decimal.Parse(orderEntries.Get(9));
+					//inv.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+					inv.CustomerType = "EU Customer";
+					invoices.Add(inv);
+					
+					Domain.Order order;
+					order.DateOfOrder = DateTime.ParseExact(orderEntries.Get(0),"dd/MM/yyyy");
+					order.OrderNumber = orderEntries.Get(4);
+					order.Invoices = invoices;
+					orders.Add(order);
+				} 
+				elseif(orderEntries.Get(2).StartsWith("NoE-INV")) 
+				{
+					Domain.Invoice inv;
+					inv.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+					inv.InvoiceNumber = orderEntries.Get(3);
+					inv.Description = orderEntries.Get(5);
+					//inv.Amount = decimal.Parse(orderEntries.Get(9));
+					//inv.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+					inv.CustomerType = "Non EU Customer";
+					invoices.Add(inv);
+					
+					Domain.Order order;
+					order.DateOfOrder = DateTime.ParseExact(orderEntries.Get(0),"dd/MM/yyyy");
+					order.OrderNumber = orderEntries.Get(4);
+					order.Invoices = invoices;
+					orders.Add(order);
+				}
+			}
+	        rowCount = rowCount + 1;
+//		    commercialAgreement.Orders = orders;
+//		    commercialAgreement.Save();
+		    transaction.Orders.AddRange(orders);
+			transaction.Save();
+		    
+		}
+ 		DebugLib.Logger.WriteWarnLine("Rowcount " + rowCount.ToString());
+}</Operation>
+        <Operation Name="LecosOrderCSVParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Domain.Order LecosOrderCSVParser(Domain.Order newOrder,string path, int TransactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return null;
+  	}
+	DebugLib.Logger.WriteWarnLine("LEKOS File Import");
+	
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(TransactionId);
+	
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+//	Domain.Order newOrder = Domain.Order.Create();
+	Domain.Supplier supplier = transaction.Supplier;
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return null;
+	    }
+	    DebugLib.Logger.WriteInfoLine("rows " + row);
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return null;
+	   	}
+	   	if ( entries.Get(0).StartsWith("Α-ΠΑ"))
+	   	{ 
+		   	newOrder.OrderNumber = entries.Get(0);
+		    newOrder.DateOfOrder = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+		    newOrder.PaymentTerms = entries.Get(10);
+		}
+	   	if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			Domain.OrderProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			newOrder.OrderProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+//				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+//				newSupplierProduct.Price = invprod.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+//				supplier.Save();
+			}
+		}
+		rowCount = rowCount + 1;
+	}	
+//	transaction.Orders.Add(newOrder);
+//	transaction.Save();
+	return newOrder;
+}</Operation>
+        <Operation Name="LecosDeliveryNoteParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Domain.DeliveryNote LecosDeliveryNoteParser(Domain.DeliveryNote newDeliveryNote, string path, int TransactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return null;
+  	}
+	DebugLib.Logger.WriteWarnLine("LEKOS File Import");
+	
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(TransactionId);
+	
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+//	Domain.DeliveryNote newDeliveryNote = Domain.DeliveryNote.Create();
+	Domain.Supplier supplier = transaction.Supplier;
+	
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return null;
+	    }
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return null;
+	   	}
+	   	if(entries.Get(0).StartsWith("Α-ΔΑ"))
+	   	{
+	       	newDeliveryNote.DeliveryNoteNumber = entries.Get(0);
+	       	newDeliveryNote.Description = entries.Get(1);
+	       	newDeliveryNote.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+	       	newDeliveryNote.Amount = CommonLib.Utilities.ToDecimal(entries.Get(14));
+       	}
+       	if(entries.Get(0).StartsWith("Α-ΤΔ"))
+       	{
+       	        newDeliveryNote.DeliveryNoteNumber = entries.Get(0);
+    	        newDeliveryNote.Description = entries.Get(1);
+    	        newDeliveryNote.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+    	        newDeliveryNote.Amount = CommonLib.Utilities.ToDecimal(entries.Get(14));
+    	        
+    	        Domain.Invoice newInvoice;
+    	        newInvoice.InvoiceNumber = entries.Get(0);
+    	        newInvoice.Description = entries.Get(1);
+    	        newInvoice.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+    	        newInvoice.Amount = CommonLib.Utilities.ToDecimal(entries.Get(14));
+    	        transaction.Invoices.Add(newInvoice);
+       	}
+       	if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			Domain.DeliveryNoteProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			newDeliveryNote.DeliveryNoteProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+//				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+//				newSupplierProduct.Price = invprod.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+				supplier.Save();
+			}
+		}
+		rowCount = rowCount + 1;
+	}	
+//	transaction.DeliveryNotes.Add(newDeliveryNote);
+//	transaction.Save();
+	return newDeliveryNote;
+}</Operation>
+        <Operation Name="LecosInvoiceParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Domain.Invoice LecosInvoiceParser(Domain.Invoice newInvoice, string path, int TransactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return null;
+  	}
+	DebugLib.Logger.WriteWarnLine("LEKOS File Import");
+	
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(TransactionId);
+	
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+//	Domain.Invoice newInvoice = Domain.Invoice.Create();
+	Domain.Supplier supplier = transaction.Supplier;
+	
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return null;
+	    }
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return null;
+	   	}
+	   	if(entries.Get(0).StartsWith("Α-ΤΠ"))
+	   	{
+		    newInvoice.InvoiceNumber = entries.Get(0);
+		    newInvoice.Description = entries.Get(1);
+		    newInvoice.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+		    newInvoice.Amount = CommonLib.Utilities.ToDecimal(entries.Get(14));
+        }
+        if(entries.Get(0).StartsWith("Α-ΤΔ"))
+       	{
+   	    	 Domain.DeliveryNote newDeliveryNote;
+   	        newDeliveryNote.DeliveryNoteNumber = entries.Get(0);
+	        newDeliveryNote.Description = entries.Get(1);
+	        newDeliveryNote.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+	        newDeliveryNote.Amount = CommonLib.Utilities.ToDecimal(entries.Get(14));
+	       
+	        newInvoice.InvoiceNumber = entries.Get(0);
+	        newInvoice.Description = entries.Get(1);
+	        newInvoice.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+	        newInvoice.Amount = CommonLib.Utilities.ToDecimal(entries.Get(14));
+	        transaction.Invoices.Add(newInvoice);
+	  	}
+        if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			Domain.InvoiceProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			newInvoice.InvoiceProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+//				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+//				newSupplierProduct.Price = invprod.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+				supplier.Save();
+			}
+		}
+		rowCount = rowCount + 1;
+	}	
+//	transaction.Invoices.Add(newInvoice);
+//	transaction.Save();
+	return newInvoice;
+}</Operation>
+        <Operation Name="LecosCreditNoteParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Domain.CreditNote LecosCreditNoteParser(Domain.CreditNote crNote, string path, int TransactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return null;
+  	}
+	DebugLib.Logger.WriteWarnLine("LEKOS File Import");
+	
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(TransactionId);
+	
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+//	Domain.CreditNote crNote = Domain.CreditNote.Create();
+	Domain.Supplier supplier = transaction.Supplier;
+	
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return null;
+	    }
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return null;
+	   	}
+	   	if(entries.Get(0).StartsWith("Χ-Α"))
+	   	{
+		   	crNote.CreditNoteNumber = entries.Get(0);
+	        crNote.Description = entries.Get(1);
+	        crNote.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+	        crNote.TotalPrice = CommonLib.Utilities.ToDecimal(entries.Get(14));
+        }
+        if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			Domain.CreditNoteProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			crNote.CreditNoteProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+//				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+//				newSupplierProduct.Price = invprod.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+				supplier.Save();
+			}
+		}
+		rowCount = rowCount + 1;
+	}	
+//	transaction.CreditNotes.Add(crNote);
+//	transaction.Save();
+	return crNote;
+}</Operation>
+        <Operation Name="LecosEUInvoiseParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="false" IsInherited="false" IsExternal="false">function void LecosEUInvoiseParser(string path, int TransactionId)
+{
+    string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return;
+  	}
+	DebugLib.Logger.WriteWarnLine("LEKOS File Import");
+	
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(TransactionId);
+	
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+	Domain.Invoice newInvoice = Domain.Invoice.Create();
+	Domain.Supplier supplier = transaction.Supplier;
+	
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return;
+	    }
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return;
+	   	}
+		
+        newInvoice.InvoiceNumber = entries.Get(0);
+        newInvoice.Description = entries.Get(1);
+        newInvoice.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+        newInvoice.Amount = CommonLib.Utilities.ToDecimal(entries.Get(14));
+        newInvoice.CustomerType = "EU Customer";
+        
+        if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			Domain.InvoiceProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			newInvoice.InvoiceProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+//				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+//				newSupplierProduct.Price = invprod.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+				supplier.Save();
+			}
+		}
+	}	
+	transaction.Invoices.Add(newInvoice);
+	transaction.Save();
+}</Operation>
+        <Operation Name="RaymetricsParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="false" IsInherited="false" IsExternal="false">function void RaymetricsParser(
+	string path,
+	int transactionId
+)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+	if(! pathCSV.Contains("csv", true)) 
+ 	{
+ 	    return;
+ 	} 
+ 	DebugLib.Logger.WriteWarnLine("raymetrics File Import");
+ 	
+ 	int rowCount = 0;
+	Array[string] entries;
+	Array[string] orderEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(transactionId);
+	Domain.ImportedBuyer newImportedBuyer = Domain.ImportedBuyer.Create();
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+	
+	foreach (string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true)) 
+	{
+	    if (string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        continue;
+	    }    
+    	entries = row.Split(';');
+        if(! (entries.Length &gt; 0)) 
+        {
+            continue;
+    	}    
+		if (entries.Get(0).StartsWith("Πελάτης")) 
+	    {
+       		newImportedBuyer.Code = entries.Get(1);
+       		DebugLib.Logger.WriteWarnLine("Customer is " + newImportedBuyer.Code);
+	    	if(transaction.ImportedBuyer.Code != newImportedBuyer.Code)
+	    	{
+	    	    return;
+	    	}
+		}
+		if (rowCount &gt; 0) 
+        {
+			DebugLib.Logger.WriteInfoLine("order----&gt; " + row);
+			orderEntries = row.Split(';');
+			if(orderEntries.Get(2).StartsWith("ΤΔΑ-Χ")) 
+			{
+				Domain.Invoice inv;
+				inv.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+				inv.InvoiceNumber = orderEntries.Get(3);
+				inv.Description = orderEntries.Get(5);
+				//inv.Amount = decimal.Parse(orderEntries.Get(9));
+				//inv.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+				transaction.Invoices.Add(inv);
+			} 
+			elseif(orderEntries.Get(2).StartsWith("EU-INV")) 
+			{
+				Domain.Invoice inv;
+				inv.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+				inv.InvoiceNumber = orderEntries.Get(3);
+				inv.Description = orderEntries.Get(5);
+				//inv.Amount = decimal.Parse(orderEntries.Get(9));
+				//inv.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+				inv.CustomerType = "EU Customer";
+				transaction.Invoices.Add(inv);
+			} 
+			elseif(orderEntries.Get(2).StartsWith("NoE-INV")) 
+			{
+				Domain.Invoice inv;
+				inv.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+				inv.InvoiceNumber = orderEntries.Get(3);
+				inv.Description = orderEntries.Get(5);
+				//inv.Amount = decimal.Parse(orderEntries.Get(9));
+				//inv.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+				inv.CustomerType = "Non EU Customer";
+				transaction.Invoices.Add(inv);
+			}
+		}
+        rowCount = rowCount + 1;
+	}
+	transaction.Save();
+}</Operation>
+        <Operation Name="RaymetricsInvoiceParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Domain.Invoice RaymetricsInvoiceParser(Domain.Invoice invoice, string path)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+	if(! pathCSV.Contains("csv", true)) 
+ 	{
+ 	    return invoice;
+ 	} 
+ 	DebugLib.Logger.WriteWarnLine("raymetrics File Import");
+ 	
+ 	int rowCount = 0;
+	Array[string] entries;
+	Array[string] orderEntries;
+//	Domain.Transaction transaction = Domain.Transaction.GetByKey(transactionId);
+//	Domain.ImportedBuyer newImportedBuyer = Domain.ImportedBuyer.Create();
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+	
+	foreach (string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true)) 
+	{
+	    if (string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        rowCount = rowCount + 1;
+	        continue;
+	    }    
+    	entries = row.Split(';');
+        if(! (entries.Length &gt; 0)) 
+        {
+            rowCount = rowCount + 1;
+            continue;
+    	}    
+		if (rowCount &gt; 0) 
+        {
+			DebugLib.Logger.WriteInfoLine("order----&gt; " + row);
+			orderEntries = row.Split(';');
+			if(orderEntries.Get(2).StartsWith("ΤΔΑ-Χ")) 
+			{
+				invoice.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+				invoice.InvoiceNumber = orderEntries.Get(3);
+				invoice.Description = orderEntries.Get(5);
+				//invoice.Amount = decimal.Parse(orderEntries.Get(9));
+				//invoice.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+			} 
+			elseif(orderEntries.Get(2).StartsWith("EU-INV")) 
+			{
+				invoice.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+				invoice.InvoiceNumber = orderEntries.Get(3);
+				invoice.Description = orderEntries.Get(5);
+				//invoice.Amount = decimal.Parse(orderEntries.Get(9));
+				//invoice.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+				invoice.CustomerType = "EU Customer";
+			} 
+			elseif(orderEntries.Get(2).StartsWith("NoE-INV")) 
+			{
+				invoice.DateIssued = DateTime.ParseExact(orderEntries.Get(1),"dd/MM/yyyy");
+				invoice.InvoiceNumber = orderEntries.Get(3);
+				invoice.Description = orderEntries.Get(5);
+				//invoice.Amount = decimal.Parse(orderEntries.Get(9));
+				//invoice.CumulativeBalance = decimal.Parse(orderEntries.Get(10));
+				invoice.CustomerType = "Non EU Customer";
+			}
+		}
+        rowCount = rowCount + 1;
+	}
+	return invoice;
+}</Operation>
+        <Operation Name="OrderStandardCSVParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Domain.Order OrderStandardCSVParser(Domain.Order order, string path, int transactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return order;
+  	}
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(transactionId);
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+	Domain.Supplier supplier = transaction.Supplier;
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return order;
+	    }
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return order;
+	   	}
+   	   	order.OrderNumber = entries.Get(0);
+   	   	order.DateOfOrder = DateTime.ParseExact(entries.Get(1),"dd/MM/yyyy");
+   	   	order.EstimatedDateOfDelivery = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+	    order.PaymentTerms = entries.Get(3);
+	    order.From = entries.Get(4);
+	    order.DeliveryTo = entries.Get(5);
+	
+	   	if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			
+			Domain.OrderProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			product.UnitValue = productEntries.Get(4);
+			product.Price = CommonLib.Utilities.ToDecimal(productEntries.Get(5));
+			order.OrderProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+				newSupplierProduct.Price = product.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+			}
+		}
+		rowCount = rowCount + 1;
+	}	
+	return order;
+}</Operation>
+        <Operation Name="InvoiceStandardCSVParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Domain.Invoice InvoiceStandardCSVParser(Domain.Invoice invoice, string path, int transactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return invoice;
+  	}
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(transactionId);
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+	Domain.Supplier supplier = transaction.Supplier;
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return invoice;
+	    }
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return invoice;
+	   	}
+   	   	invoice.InvoiceNumber = entries.Get(0);
+   	   	invoice.Description = entries.Get(1);
+   	   	invoice.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+	    invoice.CustomerType = entries.Get(3);
+	    invoice.Amount = CommonLib.Utilities.ToDecimal(entries.Get(4));
+	    invoice.TotalPrice = CommonLib.Utilities.ToDecimal(entries.Get(5));
+	    invoice.CumulativeBalance = CommonLib.Utilities.ToDecimal(entries.Get(6));
+	
+	   	if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			
+			Domain.InvoiceProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			product.UnitValue = productEntries.Get(4);
+			product.Price = CommonLib.Utilities.ToDecimal(productEntries.Get(5));
+			invoice.InvoiceProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+				newSupplierProduct.Price = product.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+			}
+		}
+		rowCount = rowCount + 1;
+	}	
+	return invoice;
+}</Operation>
+        <Operation Name="DeliveryNoteStandardCSVParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Domain.DeliveryNote DeliveryNoteStandardCSVParser(Domain.DeliveryNote deliveryNote, string path, int transactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return deliveryNote;
+  	}
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(transactionId);
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+	Domain.Supplier supplier = transaction.Supplier;
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return deliveryNote;
+	    }
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return deliveryNote;
+	   	}
+   	   	deliveryNote.DeliveryNoteNumber = entries.Get(0);
+   	   	deliveryNote.Description = entries.Get(1);
+   	   	deliveryNote.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+	    
+	   	if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			
+			Domain.DeliveryNoteProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			product.UnitValue = productEntries.Get(4);
+			product.Price = CommonLib.Utilities.ToDecimal(productEntries.Get(5));
+			deliveryNote.DeliveryNoteProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+				newSupplierProduct.Price = product.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+			}
+		}
+		rowCount = rowCount + 1;
+	}	
+	return deliveryNote;
+}</Operation>
+        <Operation Name="CreditNoteStandardCSVParser" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="false" IsInherited="false" IsExternal="false">function Domain.CreditNote CreditNoteStandardCSVParser(Domain.CreditNote creditNote, string path, int transactionId)
+{
+	string pathCSV = CommonLib.Utilities.GetUploadsPath(path);
+ 	if(! pathCSV.Contains("csv", true)) 
+   	{
+   	    return creditNote;
+  	}
+	int rowCount = 0;
+	Array[string] entries;
+	Array[string] productEntries;
+	Domain.Transaction transaction = Domain.Transaction.GetByKey(transactionId);
+	Collection[string] delim;
+	delim.Add("\r");
+	delim.Add("\n");
+	Domain.Supplier supplier = transaction.Supplier;
+	foreach string: row in FileIOLib.File.ReadAllFrom(pathCSV).Split(delim.ToArray(), true) 
+	{
+		if(string.IsNullOrEmpty(row) || string.IsNullOrWhiteSpace(row)) 
+	    {
+	        return creditNote;
+	    }
+	    entries = row.Split(';');
+		if(!(entries.Length &gt; 0)) 
+		{
+			return creditNote;
+	   	}
+   	   	creditNote.CreditNoteNumber = entries.Get(0);
+   	   	creditNote.Description = entries.Get(1);
+   	   	creditNote.DateIssued = DateTime.ParseExact(entries.Get(2),"dd/MM/yyyy");
+	    
+	   	if(rowCount &gt; 0)
+	    {
+	    	DebugLib.Logger.WriteInfoLine("product----&gt; " + row);
+			
+			productEntries = row.Split(';');
+			
+			Domain.CreditNoteProduct product;
+			product.Code = productEntries.Get(0);
+			product.Description = productEntries.Get(1);
+			product.MeasurementUnit = productEntries.Get(2);
+			product.Quantity =  CommonLib.Utilities.ToDecimal(productEntries.Get(3));
+			product.UnitValue = productEntries.Get(4);
+			product.Price = CommonLib.Utilities.ToDecimal(productEntries.Get(5));
+			creditNote.CreditNoteProducts.Add(product);
+			
+			if(supplier.SupplierProducts.Any(sp =&gt; sp.Code == product.Code))
+			{
+				DebugLib.Logger.WriteWarnLine("product " + product.Description + "is already saved as a Supplier product.");
+			}
+			else 
+			{
+				Domain.SupplierProduct newSupplierProduct;
+				newSupplierProduct.Code = product.Code;
+				newSupplierProduct.Description = product.Description;
+				newSupplierProduct.UnitValue = product.UnitValue;
+				newSupplierProduct.MeasurementUnit = product.MeasurementUnit;
+				newSupplierProduct.Price = product.Price;
+				supplier.SupplierProducts.Add(newSupplierProduct);
+			}
+		}
+		rowCount = rowCount + 1;
+	}	
+	return creditNote;
+}</Operation>
+      </Operations>
+    </Class>
+    <Class ModelName="Utils" Name="Status" ShadowModel="" ShadowClass="" Description="" Stereotype="Enumeration" PK="" ConcurencyControl="true" AutoAssignPrimaryKey="true" IdGeneratorType="HiLoGenerator" IsPersisted="true" IsStatic="false" BaseClass="" BaseClasses="" BaseModel="">
+      <DiagramInfo IsExpanded="true" Width="140" Height="140" Top="41" Left="381" />
+      <Literals>
+        <Literal Name="Initial" IsValueClass="false" Description="" DataType="string" BaseInfo="" Length="100" Precision="8" Scale="2" InitValue="" IsRequired="false" IsInherited="false" Persisted="false" IsEncrypted="false" IsStatic="false" ReadOnly="false" IsExternal="false" CustomValidation="" IsCreditCard="false" IsURL="false" IsEmail="false" MinLength="0" MaxLength="100" MinValue="" MaxValue="" Getter="" Setter="">
+          <DiagramInfo Edge1="Top" Edge2="Top" Percent1="0.5" Percent2="0.5" Path="M 0 0 L 0 0" />
+        </Literal>
+      </Literals>
+      <Operations />
+    </Class>
+    <Class ModelName="Utils" Name="MapPoint" ShadowModel="" ShadowClass="" Description="" Stereotype="Class" PK="Id" ConcurencyControl="true" AutoAssignPrimaryKey="true" IdGeneratorType="HiLoGenerator" IsPersisted="true" IsStatic="false" BaseClass="" BaseClasses="" BaseModel="">
+      <DiagramInfo IsExpanded="true" Width="180.78125" Height="214" Top="89" Left="992" />
+      <Attributes>
+        <Attribute Name="Id" IsValueClass="false" Description="" DataType="int" BaseInfo="" Length="100" Precision="8" Scale="2" InitValue="" IsRequired="false" IsInherited="false" Persisted="true" IsEncrypted="false" IsStatic="false" ReadOnly="false" IsExternal="false" CustomValidation="" IsCreditCard="false" IsURL="false" IsEmail="false" MinLength="0" MaxLength="100" MinValue="" MaxValue="" Getter="" Setter="" />
+        <Attribute Name="Address" IsValueClass="false" Description="" DataType="string" BaseInfo="" Length="100" Precision="8" Scale="2" InitValue="" IsRequired="false" IsInherited="false" Persisted="true" IsEncrypted="false" IsStatic="false" ReadOnly="false" IsExternal="false" CustomValidation="" IsCreditCard="false" IsURL="false" IsEmail="false" MinLength="0" MaxLength="100" MinValue="" MaxValue="" Getter="" Setter="" />
+        <Attribute Name="Latitude" IsValueClass="false" Description="" DataType="double" BaseInfo="" Length="100" Precision="8" Scale="2" InitValue="" IsRequired="false" IsInherited="false" Persisted="true" IsEncrypted="false" IsStatic="false" ReadOnly="false" IsExternal="false" CustomValidation="" IsCreditCard="false" IsURL="false" IsEmail="false" MinLength="0" MaxLength="100" MinValue="" MaxValue="" Getter="" Setter="" />
+        <Attribute Name="Longitude" IsValueClass="false" Description="" DataType="double" BaseInfo="" Length="100" Precision="8" Scale="2" InitValue="" IsRequired="false" IsInherited="false" Persisted="true" IsEncrypted="false" IsStatic="false" ReadOnly="false" IsExternal="false" CustomValidation="" IsCreditCard="false" IsURL="false" IsEmail="false" MinLength="0" MaxLength="100" MinValue="" MaxValue="" Getter="" Setter="" />
+        <Attribute Name="Title" IsValueClass="false" Description="" DataType="string" BaseInfo="" Length="100" Precision="8" Scale="2" InitValue="" IsRequired="false" IsInherited="false" Persisted="true" IsEncrypted="false" IsStatic="false" ReadOnly="false" IsExternal="false" CustomValidation="" IsCreditCard="false" IsURL="false" IsEmail="false" MinLength="0" MaxLength="100" MinValue="" MaxValue="" Getter="" Setter="" />
+        <Attribute Name="Icon" IsValueClass="false" Description="" DataType="string" BaseInfo="" Length="100" Precision="8" Scale="2" InitValue="" IsRequired="false" IsInherited="false" Persisted="true" IsEncrypted="false" IsStatic="false" ReadOnly="false" IsExternal="false" CustomValidation="" IsCreditCard="false" IsURL="false" IsEmail="false" MinLength="0" MaxLength="100" MinValue="" MaxValue="" Getter="" Setter="" />
+      </Attributes>
+      <Operations>
+        <Operation Name="InitiOrderMapPoints" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function Collection[Domain.MapPoint] InitiOrderMapPoints(Domain.Order order)
+{
+	Collection[Domain.MapPoint] mapPoints;
+	
+	Domain.MapPoint fromPoint = Domain.MapPoint.Create();
+	if(! string.IsNullOrEmpty(order.From))
+	{
+		//fromPoint.ConsumeGoogleGeocode(order.From);
+	}
+	fromPoint.Address = order.From;
+	fromPoint.Title = "Shipping From";
+	fromPoint.Icon = "http://apps.zappdev.com/TomeFinance_1242_vvasilopoulos/resources/images/" + "industries.png";
+	mapPoints.Add(fromPoint);
+	
+	if(order.IntermediateParty)
+	{
+	    foreach Domain.BillOfLanding: bol in order.BillOfLandings 
+	    {
+	        if(bol.LandingPlace == order.From) { continue; }
+	    	Domain.MapPoint intermediaryFromPoint = Domain.MapPoint.Create();
+	    	if(! string.IsNullOrEmpty(bol.LandingPlace))
+	    	{
+	    		//intermediaryFromPoint.ConsumeGoogleGeocode(bol.LandingPlace);    
+	    	}
+	    	intermediaryFromPoint.Address = bol.LandingPlace;
+	    	intermediaryFromPoint.Icon = "transport.png";
+	    	intermediaryFromPoint.Title = "Intermediary Landing Place";
+	    	mapPoints.Add(intermediaryFromPoint);
+	    	
+	    	if(bol.DeliveryPlace == order.DeliveryTo) { continue; }
+	    	Domain.MapPoint intemediaryToPoint = Domain.MapPoint.Create();
+	    	if(! string.IsNullOrEmpty(bol.DeliveryPlace))
+	    	{
+	    		//intemediaryToPoint.ConsumeGoogleGeocode(bol.DeliveryPlace);    
+	    	}
+	    	intemediaryToPoint.Address = bol.DeliveryPlace;
+	    	intemediaryToPoint.Icon = "transport.png";
+	    	intemediaryToPoint.Title = "Intermediary Delivery Place";
+	    	mapPoints.Add(intemediaryToPoint);
+	    }
+	}
+	
+	Domain.MapPoint deliveryPoint = Domain.MapPoint.Create();
+	if(! string.IsNullOrEmpty(order.DeliveryTo))
+	{
+		//deliveryPoint.ConsumeGoogleGeocode(order.DeliveryTo);
+	}
+	deliveryPoint.Address = order.DeliveryTo;
+	deliveryPoint.Title = "Delivery To";
+	deliveryPoint.Icon = "commercial-places.png";
+	mapPoints.Add(deliveryPoint);
+	
+	return mapPoints;
+}</Operation>
+      </Operations>
+    </Class>
+    <Class ModelName="Utils" Name="PubSubManager" ShadowModel="" ShadowClass="" Description="" Stereotype="Class" PK="Id" ConcurencyControl="false" AutoAssignPrimaryKey="false" IdGeneratorType="HiLoGenerator" IsPersisted="false" IsStatic="false" BaseClass="" BaseClasses="" BaseModel="">
+      <DiagramInfo IsExpanded="true" Width="223.546875" Height="180" Top="326" Left="386" />
+      <Attributes>
+        <Attribute Name="Id" IsValueClass="false" Description="" DataType="int" BaseInfo="" Length="100" Precision="8" Scale="2" InitValue="" IsRequired="false" IsInherited="false" Persisted="false" IsEncrypted="false" IsStatic="false" ReadOnly="false" IsExternal="false" CustomValidation="" IsCreditCard="false" IsURL="false" IsEmail="false" MinLength="0" MaxLength="100" MinValue="" MaxValue="" Getter="" Setter="" />
+      </Attributes>
+      <Operations>
+        <Operation Name="RestartPubSubSubscriber" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function void RestartPubSubSubscriber() 
+{
+	Interfaces.PubSubClient.API.RemoveAllSubscribers();
+}</Operation>
+        <Operation Name="KeepSubscriberAlive" Description="" Syntax="" RuleType="Default" EventName="" ApplyToAttribute="" BaseInfo="" IsStatic="true" IsInherited="false" IsExternal="false">static function void KeepSubscriberAlive() 
+{
+	DebugLib.Logger.WriteInfoLine("Is the subscriber alive?");
+	var sentTime = DateTime.Now();
+	var certPath = CommonLib.Utilities.GetServerPhysicalPath(
+						CommonLib.Utilities.VirtualPathToAbsolute(
+							AppLib.Application.GetConfigurationKey("PubSub_RootCAFilePath")));
+							
+	var host = AppLib.Application.GetConfigurationKey("PubSub_Host");
+	var port = int.Parse(AppLib.Application.GetConfigurationKey("PubSub_Port"));
+	string message="{\"message_type\":\"ElgekaLoadList\",\"scn_slug\":\"elgeka\",\"payload\":\"\"}";
+	Interfaces.PubSubClient.API.PublishMessage(
+		certPath,
+		host,
+		port,
+		message
+	);
+	
+	//Wait max 10 seconds for the message
+	int retries = 0;
+	while(retries &lt;= 5) {
+		CommonLib.Utilities.Sleep(2000);
+		
+//		var cnt = Domain.LogMessage.Find(a=&gt;a.ReceivedOn &gt; sentTime &amp;&amp; a.IsPing).Length;
+//		if(cnt &gt; 0) {
+//			DebugLib.Logger.WriteInfoLine("Successfully received PING message. Subscriber is ALIVE!");
+//			return;
+//		}
+		
+		retries = retries + 1;
+	}
+	
+	DebugLib.Logger.WriteWarnLine("After aloted time no PING message was received. Subscriber is DEAD! Restarting...");
+	//Domain.PubSubManager.RestartPubSubSubscriber();
+	
+}</Operation>
+      </Operations>
+    </Class>
+  </Classes>
+  <Resources />
+</BusinessObject>

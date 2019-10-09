@@ -1,0 +1,72 @@
+<!--
+Copyright (c) CLMS. All rights reserved.
+Licensed under the AGPL-3.0 license. See LICENSE file in the project root for full license information.-->
+
+<ExternalApi DateCreated="" Model_Name="PubSubClient" Model_Description="" Version="">
+  <Endpoint TransportType="HTTP" ProtocolType="DLL">
+    <Security SecurityType="None" />
+    <Class Name="Rule" OriginalName="" Description="" Namespace="CLMS.SELIS.PubSubClient" BaseClass="" IsEnum="false">
+      <Attribute Name="Value" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="ValueType" OriginalName="" Description="" Datatype="Interfaces.PubSubClient.ValueType" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="RuleType" OriginalName="" Description="" Datatype="Interfaces.PubSubClient.RuleType" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="Key" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+    </Class>
+    <Class Name="ValueType" OriginalName="" Description="" Namespace="CLMS.SELIS.PubSubClient" BaseClass="" IsEnum="true">
+      <Attribute Name="NONE" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="String" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="Float" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="Double" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="Integer" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="Boolean" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+    </Class>
+    <Class Name="RuleType" OriginalName="" Description="" Namespace="CLMS.SELIS.PubSubClient" BaseClass="" IsEnum="true">
+      <Attribute Name="EQ" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="NE" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="GT" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="GE" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="LT" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="LE" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+    </Class>
+    <Operation Name="CreateSubscriber" Description="" Datatype="string" OriginalName="" ClientType="" IsStatic="false" AccessLog="false" Verb="GET" Text="" ContentType="JSON" Route="" Notes="" UserDefinedUrlMethod="false">
+      <Parameters>
+        <Parameter Name="managerName" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="rootCACertificatePath" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="host" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="port" DataType="int" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="authHash" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="subscriberName" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="rules" DataType="Collection[Interfaces.PubSubClient.Rule]" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="onMessage" DataType="Func[string,Object]" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+      </Parameters>
+      <Headers />
+      <CachingOptions CachePerUser="false" OperationIsCached="false" OverrideDefaultCachingSettings="false" UseCustomExpirationMethod="false" ExpirationDays="0" ExpirationHours="0" ExpirationMinutes="3" ExpirationSeconds="0" ExpirationMilliseconds="0" CacheMode="None">
+      </CachingOptions>
+    </Operation>
+    <Operation Name="RemoveSubscriber" Description="" Datatype="void" OriginalName="" ClientType="" IsStatic="false" AccessLog="false" Verb="GET" Text="" ContentType="JSON" Route="" Notes="" UserDefinedUrlMethod="false">
+      <Parameters>
+        <Parameter Name="managerName" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+      </Parameters>
+      <Headers />
+      <CachingOptions CachePerUser="false" OperationIsCached="false" OverrideDefaultCachingSettings="false" UseCustomExpirationMethod="false" ExpirationDays="0" ExpirationHours="0" ExpirationMinutes="3" ExpirationSeconds="0" ExpirationMilliseconds="0" CacheMode="None">
+      </CachingOptions>
+    </Operation>
+    <Operation Name="RemoveAllSubscribers" Description="" Datatype="void" OriginalName="" ClientType="" IsStatic="false" AccessLog="false" Verb="GET" Text="" ContentType="JSON" Route="" Notes="" UserDefinedUrlMethod="false">
+      <Parameters />
+      <Headers />
+      <CachingOptions CachePerUser="false" OperationIsCached="false" OverrideDefaultCachingSettings="false" UseCustomExpirationMethod="false" ExpirationDays="0" ExpirationHours="0" ExpirationMinutes="3" ExpirationSeconds="0" ExpirationMilliseconds="0" CacheMode="None">
+      </CachingOptions>
+    </Operation>
+    <Operation Name="PublishMessage" Description="" Datatype="void" OriginalName="" ClientType="" IsStatic="false" AccessLog="false" Verb="GET" Text="" ContentType="JSON" Route="" Notes="" UserDefinedUrlMethod="false">
+      <Parameters>
+        <Parameter Name="rootCACertificatePath" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="host" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="port" DataType="int" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+        <Parameter Name="message" DataType="string" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="QueryParameter" Alias="" />
+      </Parameters>
+      <Headers />
+      <CachingOptions CachePerUser="false" OperationIsCached="false" OverrideDefaultCachingSettings="false" UseCustomExpirationMethod="false" ExpirationDays="0" ExpirationHours="0" ExpirationMinutes="3" ExpirationSeconds="0" ExpirationMilliseconds="0" CacheMode="None">
+      </CachingOptions>
+    </Operation>
+  </Endpoint>
+  <DllEndpointDetails BinFiles="CLMS.SELIS.PubSubClient.dll" ApiClassFullPath="CLMS.SELIS.PubSubClient.PubSubSimpleManager" />
+</ExternalApi>

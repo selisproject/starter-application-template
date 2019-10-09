@@ -1,0 +1,168 @@
+{
+  "Entries": {
+    "OP|Agreement|ApprovedFromEverybody": {
+      "GeneratedSymbol": "DemonstratorApp.BO.AgreementExtensions.ApprovedFromEverybody",
+      "Lines": {}
+    },
+    "OP|Agreement|Get_CurrentAgreementStatus": {
+      "GeneratedSymbol": "DemonstratorApp.BO.AgreementExtensions.Get_CurrentAgreementStatus",
+      "Lines": {}
+    },
+    "OP|CommercialAgreement|FindSupplierBuyers": {
+      "GeneratedSymbol": "DemonstratorApp.BO.CommercialAgreementExtensions.FindSupplierBuyers",
+      "Lines": {}
+    },
+    "OP|AgreementStatus|SortStatusDesc": {
+      "GeneratedSymbol": "DemonstratorApp.BO.AgreementStatusExtensions.SortStatusDesc",
+      "Lines": {}
+    },
+    "OP|SupplierStatistic|GetSupplierDataStatistics2": {
+      "GeneratedSymbol": "DemonstratorApp.BO.SupplierStatisticExtensions.GetSupplierDataStatistics2",
+      "Lines": {}
+    },
+    "OP|SupplierStatistic|GetSupplierStatistics": {
+      "GeneratedSymbol": "DemonstratorApp.BO.SupplierStatisticExtensions.GetSupplierStatistics",
+      "Lines": {}
+    },
+    "OP|SupplierStatistic|GetSupplierTurnover": {
+      "GeneratedSymbol": "DemonstratorApp.BO.SupplierStatisticExtensions.GetSupplierTurnover",
+      "Lines": {}
+    },
+    "OP|SupplierStatistic|Get5MostProfitableSuppliers": {
+      "GeneratedSymbol": "DemonstratorApp.BO.SupplierStatisticExtensions.Get5MostProfitableSuppliers",
+      "Lines": {}
+    },
+    "OP|DeliveryNote|FindDeliveryNote": {
+      "GeneratedSymbol": "DemonstratorApp.BO.DeliveryNoteExtensions.FindDeliveryNote",
+      "Lines": {}
+    },
+    "OP|IntermediaryUser|IsIntermediary": {
+      "GeneratedSymbol": "DemonstratorApp.BO.IntermediaryUserExtensions.IsIntermediary",
+      "Lines": {}
+    },
+    "OP|Investor|GetDomainFocusOptions": {
+      "GeneratedSymbol": "DemonstratorApp.BO.InvestorExtensions.GetDomainFocusOptions",
+      "Lines": {}
+    },
+    "OP|Investor|IsInvestor": {
+      "GeneratedSymbol": "DemonstratorApp.BO.InvestorExtensions.IsInvestor",
+      "Lines": {}
+    },
+    "OP|Invoice|FindAgreement": {
+      "GeneratedSymbol": "DemonstratorApp.BO.InvoiceExtensions.FindAgreement",
+      "Lines": {}
+    },
+    "OP|Order|FindAgreement": {
+      "GeneratedSymbol": "DemonstratorApp.BO.OrderExtensions.FindAgreement",
+      "Lines": {}
+    },
+    "OP|CreditNote|FindCreditNote": {
+      "GeneratedSymbol": "DemonstratorApp.BO.CreditNoteExtensions.FindCreditNote",
+      "Lines": {}
+    },
+    "OP|ProofOfDelivery|FindAgreement": {
+      "GeneratedSymbol": "DemonstratorApp.BO.ProofOfDeliveryExtensions.FindAgreement",
+      "Lines": {}
+    },
+    "OP|Supplier|IsSupplier": {
+      "GeneratedSymbol": "DemonstratorApp.BO.SupplierExtensions.IsSupplier",
+      "Lines": {}
+    },
+    "OP|DataQuality|DataQuality": {
+      "GeneratedSymbol": "DemonstratorApp.BO.DataQualityExtensions.DataQuality",
+      "Lines": {}
+    },
+    "OP|DataAvailability|DataAvailability": {
+      "GeneratedSymbol": "DemonstratorApp.BO.DataAvailabilityExtensions.DataAvailability",
+      "Lines": {}
+    },
+    "OP|Transaction|CalculateDataAvailability": {
+      "GeneratedSymbol": "DemonstratorApp.BO.TransactionExtensions.CalculateDataAvailability",
+      "Lines": {}
+    },
+    "OP|Transaction|Get_TransactionValue": {
+      "GeneratedSymbol": "DemonstratorApp.BO.TransactionExtensions.Get_TransactionValue",
+      "Lines": {}
+    },
+    "OP|Transaction|Get_FundedAmount": {
+      "GeneratedSymbol": "DemonstratorApp.BO.TransactionExtensions.Get_FundedAmount",
+      "Lines": {}
+    },
+    "OP|TurnoverStatistic|GetTurnoverStatisticsForSupplier": {
+      "GeneratedSymbol": "DemonstratorApp.BO.TurnoverStatisticExtensions.GetTurnoverStatisticsForSupplier",
+      "Lines": {}
+    },
+    "OP|TurnoverStatistic|GetTurnoverStatisticsPerMonth": {
+      "GeneratedSymbol": "DemonstratorApp.BO.TurnoverStatisticExtensions.GetTurnoverStatisticsPerMonth",
+      "Lines": {}
+    },
+    "OP|Utils|RaymetricsCSVParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.RaymetricsCSVParser",
+      "Lines": {}
+    },
+    "OP|Utils|LecosOrderCSVParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.LecosOrderCSVParser",
+      "Lines": {}
+    },
+    "OP|Utils|LecosDeliveryNoteParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.LecosDeliveryNoteParser",
+      "Lines": {}
+    },
+    "OP|Utils|LecosInvoiceParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.LecosInvoiceParser",
+      "Lines": {}
+    },
+    "OP|Utils|LecosCreditNoteParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.LecosCreditNoteParser",
+      "Lines": {}
+    },
+    "OP|Utils|LecosEUInvoiseParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.LecosEUInvoiseParser",
+      "Lines": {}
+    },
+    "OP|Utils|RaymetricsParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.RaymetricsParser",
+      "Lines": {}
+    },
+    "OP|Utils|RaymetricsInvoiceParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.RaymetricsInvoiceParser",
+      "Lines": {}
+    },
+    "OP|Utils|OrderStandardCSVParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.OrderStandardCSVParser",
+      "Lines": {}
+    },
+    "OP|Utils|InvoiceStandardCSVParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.InvoiceStandardCSVParser",
+      "Lines": {}
+    },
+    "OP|Utils|DeliveryNoteStandardCSVParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.DeliveryNoteStandardCSVParser",
+      "Lines": {}
+    },
+    "OP|Utils|CreditNoteStandardCSVParser": {
+      "GeneratedSymbol": "DemonstratorApp.BO.UtilsExtensions.CreditNoteStandardCSVParser",
+      "Lines": {}
+    },
+    "OP|MapPoint|InitiOrderMapPoints": {
+      "GeneratedSymbol": "DemonstratorApp.BO.MapPointExtensions.InitiOrderMapPoints",
+      "Lines": {}
+    },
+    "OP|PubSubManager|RestartPubSubSubscriber": {
+      "GeneratedSymbol": "DemonstratorApp.BO.PubSubManagerExtensions.RestartPubSubSubscriber",
+      "Lines": {}
+    },
+    "OP|PubSubManager|KeepSubscriberAlive": {
+      "GeneratedSymbol": "DemonstratorApp.BO.PubSubManagerExtensions.KeepSubscriberAlive",
+      "Lines": {}
+    },
+    "OP|FileData|GetAbsolutePath": {
+      "GeneratedSymbol": "DemonstratorApp.BO.FileDataExtensions.GetAbsolutePath",
+      "Lines": {}
+    },
+    "OP|FileData|GetThumbnail": {
+      "GeneratedSymbol": "DemonstratorApp.BO.FileDataExtensions.GetThumbnail",
+      "Lines": {}
+    }
+  }
+}

@@ -1,0 +1,265 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <Copyright>Copyright © CLMS 2018</Copyright>
+    <Company>CLMS</Company>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <AssemblyName>DemonstratorApp.Backend</AssemblyName>
+    <RootNamespace>DemonstratorApp</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IdentityModel.Services" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.applicationservices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BLL\AgreementExtensions.cs" />
+    <Compile Include="BLL\AgreementStatusExtensions.cs" />
+    <Compile Include="BLL\CommercialAgreementExtensions.cs" />
+    <Compile Include="BLL\CreditNoteExtensions.cs" />
+    <Compile Include="BLL\DataAvailabilityExtensions.cs" />
+    <Compile Include="BLL\DataQualityExtensions.cs" />
+    <Compile Include="BLL\DeliveryNoteExtensions.cs" />
+    <Compile Include="BLL\EventHandlers.cs" />
+    <Compile Include="BLL\ExternalRestServices\BDALayerDataAPI.cs" />
+    <Compile Include="BLL\ExternalRestServices\BDALayerManagementAPI.cs" />
+    <Compile Include="BLL\ExternalRestServices\KnowledgeGraph.cs" />
+    <Compile Include="BLL\ExternalRestServices\PubSub.cs" />
+    <Compile Include="BLL\FileDataExtensions.cs" />
+    <Compile Include="BLL\IntermediaryUserExtensions.cs" />
+    <Compile Include="BLL\InvestorExtensions.cs" />
+    <Compile Include="BLL\InvoiceExtensions.cs" />
+    <Compile Include="BLL\MapPointExtensions.cs" />
+    <Compile Include="BLL\OrderExtensions.cs" />
+    <Compile Include="BLL\ProofOfDeliveryExtensions.cs" />
+    <Compile Include="BLL\PubSubManagerExtensions.cs" />
+    <Compile Include="BLL\SupplierExtensions.cs" />
+    <Compile Include="BLL\SupplierStatisticExtensions.cs" />
+    <Compile Include="BLL\TransactionExtensions.cs" />
+    <Compile Include="BLL\TurnoverStatisticExtensions.cs" />
+    <Compile Include="BLL\UtilsExtensions.cs" />
+    <Compile Include="DAL\IRepository.cs" />
+    <Compile Include="DAL\NHSessionExtensions.cs" />
+    <Compile Include="DAL\OnDeleteListener.cs" />
+    <Compile Include="DAL\OnSaveOrUpdateListener.cs" />
+    <Compile Include="DAL\Repository.cs" />
+    <Compile Include="Hubs\EventsHub.cs" />
+    <Compile Include="Locales\LocaleResolver.cs" />
+    <Compile Include="POCO\Agreement.cs" />
+    <Compile Include="POCO\AgreementStatus.cs" />
+    <Compile Include="POCO\AlgorithmCheck.cs" />
+    <Compile Include="POCO\AnnualTransactionVolume.cs" />
+    <Compile Include="POCO\BillOfLanding.cs" />
+    <Compile Include="POCO\Buyer.cs" />
+    <Compile Include="POCO\BuyerStatistic.cs" />
+    <Compile Include="POCO\CommercialAgreement.cs" />
+    <Compile Include="POCO\Contact.cs" />
+    <Compile Include="POCO\CreditNote.cs" />
+    <Compile Include="POCO\CreditNoteProduct.cs" />
+    <Compile Include="POCO\CustomsClearingDocumentation.cs" />
+    <Compile Include="POCO\Dashboard.cs" />
+    <Compile Include="POCO\DataAvailability.cs" />
+    <Compile Include="POCO\DataQuality.cs" />
+    <Compile Include="POCO\DeliveryNote.cs" />
+    <Compile Include="POCO\DeliveryNoteProduct.cs" />
+    <Compile Include="POCO\DocumentAgreement.cs" />
+    <Compile Include="POCO\FileData.cs" />
+    <Compile Include="POCO\FinalAcceptanceCertificate.cs" />
+    <Compile Include="POCO\FundedTransaction.cs" />
+    <Compile Include="POCO\ImportedBuyer.cs" />
+    <Compile Include="POCO\Intermediary.cs" />
+    <Compile Include="POCO\IntermediaryType.cs" />
+    <Compile Include="POCO\IntermediaryUser.cs" />
+    <Compile Include="POCO\Investor.cs" />
+    <Compile Include="POCO\Invoice.cs" />
+    <Compile Include="POCO\InvoiceProduct.cs" />
+    <Compile Include="POCO\LetterOfCredit.cs" />
+    <Compile Include="POCO\MapPoint.cs" />
+    <Compile Include="POCO\MeanOfTransport.cs" />
+    <Compile Include="POCO\Order.cs" />
+    <Compile Include="POCO\OrderPayment.cs" />
+    <Compile Include="POCO\OrderProduct.cs" />
+    <Compile Include="POCO\OrderStatus.cs" />
+    <Compile Include="POCO\PartialProofOfDelivery.cs" />
+    <Compile Include="POCO\Payment.cs" />
+    <Compile Include="POCO\Preferences.cs" />
+    <Compile Include="POCO\ProductCategory.cs" />
+    <Compile Include="POCO\ProofOfDelivery.cs" />
+    <Compile Include="POCO\PubSubManager.cs" />
+    <Compile Include="POCO\Status.cs" />
+    <Compile Include="POCO\StorageMedium.cs" />
+    <Compile Include="POCO\Supplier.cs" />
+    <Compile Include="POCO\SupplierBusinessStructureData.cs" />
+    <Compile Include="POCO\SupplierContactInformation.cs" />
+    <Compile Include="POCO\SupplierEvaluation.cs" />
+    <Compile Include="POCO\SupplierExtraInformation.cs" />
+    <Compile Include="POCO\SupplierProduct.cs" />
+    <Compile Include="POCO\SupplierReceivables.cs" />
+    <Compile Include="POCO\SupplierStatistic.cs" />
+    <Compile Include="POCO\SupplierTurnover.cs" />
+    <Compile Include="POCO\SupplierUploads.cs" />
+    <Compile Include="POCO\Transaction.cs" />
+    <Compile Include="POCO\TransactionOverview.cs" />
+    <Compile Include="POCO\TransactionPayment.cs" />
+    <Compile Include="POCO\TransactionStatus.cs" />
+    <Compile Include="POCO\Turnover.cs" />
+    <Compile Include="POCO\TurnoverStatistic.cs" />
+    <Compile Include="POCO\Utils.cs" />
+    <Compile Include="Security\Encryption\SecurityManager.cs" />
+    <Compile Include="Security\Owin\BasicAuthenticationExtensions.cs" />
+    <Compile Include="Security\Owin\BasicAuthenticationHandler.cs" />
+    <Compile Include="Security\Owin\BasicAuthenticationMiddleware.cs" />
+    <Compile Include="Security\Owin\BasicAuthenticationOptions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAL/MappingFiles\Agreement.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\AgreementStatus.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\AlgorithmCheck.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\AnnualTransactionVolume.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\BillOfLanding.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Buyer.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\BuyerStatistic.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\CommercialAgreement.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Contact.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\CreditNote.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\CreditNoteProduct.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\CustomsClearingDocumentation.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Dashboard.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\DataAvailability.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\DataQuality.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\DeliveryNote.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\DeliveryNoteProduct.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\DocumentAgreement.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\FileData.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\FinalAcceptanceCertificate.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\FundedTransaction.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\ImportedBuyer.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Intermediary.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\IntermediaryUser.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Investor.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Invoice.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\InvoiceProduct.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\LetterOfCredit.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\MapPoint.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\MeanOfTransport.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Order.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\OrderPayment.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\OrderProduct.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\OrderStatus.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\PartialProofOfDelivery.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Payment.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Preferences.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\ProductCategory.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\ProofOfDelivery.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Supplier.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierBusinessStructureData.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierContactInformation.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierEvaluation.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierExtraInformation.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierProduct.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierReceivables.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierStatistic.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierTurnover.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\SupplierUploads.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Transaction.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\TransactionOverview.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\TransactionPayment.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\TransactionStatus.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\Turnover.hbm.xml" />
+    <EmbeddedResource Include="DAL/MappingFiles\TurnoverStatistic.hbm.xml" />
+    <EmbeddedResource Include="Locales/Locales\en-usLocales.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CLMS.AppDev.Cache">
+      <Private>True</Private>
+      <HintPath>..\..\..\Projects\Lib\CLMS.AppDev.Cache.dll</HintPath>
+    </Reference>
+    <Reference Include="CLMS.SELIS.PubSubClient">
+      <Private>True</Private>
+      <HintPath>..\..\..\Projects\InterfaceBinaries\CLMS.SELIS.PubSubClient.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <Private>True</Private>
+      <HintPath>..\..\..\Projects\Lib\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http">
+      <Private>True</Private>
+      <HintPath>..\..\..\Projects\Lib\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost">
+      <Private>True</Private>
+      <HintPath>..\..\..\Projects\Lib\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="zAppDev.DotNet.Framework">
+      <Private>True</Private>
+      <HintPath>..\..\..\Projects\Lib\zAppDev.DotNet.Framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CacheManager.Core" Version="1.2.0" />
+    <PackageReference Include="CSharpVerbalExpressions" Version="0.1.0" />
+    <PackageReference Include="CsvHelper" Version="2.13.1" />
+    <PackageReference Include="DotNetZip" Version="1.12.0" />
+    <PackageReference Include="FluentNHibernate" Version="2.1.2" />
+    <PackageReference Include="GTFS" Version="1.7.1" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNet.Identity.Owin" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Owin" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Security" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Security.Facebook" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Security.Google" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Security.Jwt" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.0.0" />
+    <PackageReference Include="ncrontab" Version="3.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NHibernate" Version="5.2.1" />
+    <PackageReference Include="Owin" Version="1.0.0" />
+    <PackageReference Include="System.DirectoryServices" Version="4.5.0" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="4.5.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.5.3" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Projects\ExternalStructs\ExternalStructs.csproj" />
+  </ItemGroup>
+</Project>

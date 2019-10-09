@@ -1,0 +1,64 @@
+<!--
+Copyright (c) CLMS. All rights reserved.
+Licensed under the AGPL-3.0 license. See LICENSE file in the project root for full license information.-->
+
+<ExternalApi DateCreated="" Model_Name="PubSub" Model_Description="" Version="">
+  <Endpoint TransportType="HTTP" ProtocolType="REST">
+    <Security SecurityType="None" />
+    <Class Name="SubscriptionRequest" OriginalName="SubscriptionRequest" Description="" Namespace="" BaseClass="" IsEnum="false">
+      <Attribute Name="authHash" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="subscriptionId" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="data" OriginalName="" Description="" Datatype="Array[Interfaces.PubSub.SubscriptionRule]" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+    </Class>
+    <Class Name="SubscriptionRule" OriginalName="data" Description="" Namespace="" BaseClass="" IsEnum="false">
+      <Attribute Name="key" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="val" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="type" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="op" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+    </Class>
+    <Class Name="SubscriptionInfo" OriginalName="SubscriptionInfo" Description="" Namespace="" BaseClass="" IsEnum="false">
+      <Attribute Name="wsport" OriginalName="" Description="" Datatype="int" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="host" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="port" OriginalName="" Description="" Datatype="int" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="subscriptionId" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+    </Class>
+    <Class Name="UnsubscribeRequest" OriginalName="UnsubscribeRequest" Description="" Namespace="" BaseClass="" IsEnum="false">
+      <Attribute Name="authHash" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+      <Attribute Name="subscriptionId" OriginalName="" Description="" Datatype="string" Length="0" IsPrimary="false" IsEncrypted="false" OriginalDataType="" SerializeAsXMLAttribute="false" />
+    </Class>
+    <Operation Name="Subscribe" Description="" Datatype="Interfaces.PubSub.SubscriptionInfo" OriginalName="" ClientType="" IsStatic="false" AccessLog="false" Verb="POST" Text="" ContentType="JSON" Route="subscribe" Notes="" UserDefinedUrlMethod="false">
+      <Parameters>
+        <Parameter Name="subscriptionrequest" DataType="Interfaces.PubSub.SubscriptionRequest" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="RequestBody" Alias="" />
+      </Parameters>
+      <Headers />
+      <CachingOptions CachePerUser="false" OperationIsCached="false" OverrideDefaultCachingSettings="false" UseCustomExpirationMethod="false" ExpirationDays="0" ExpirationHours="0" ExpirationMinutes="3" ExpirationSeconds="0" ExpirationMilliseconds="0" CacheMode="None">function TimeSpan Expiration(
+	Interfaces.PubSubSub.SubscriptionRequest subscriptionrequest,
+	Interfaces.PubSub.SubscriptionInfo response
+)
+{ 
+	 return CommonLib.Utilities.CreateTimeSpan(0, 1, 0); 
+}</CachingOptions>
+    </Operation>
+    <Operation Name="Unsubscribe" Description="" Datatype="void" OriginalName="" ClientType="" IsStatic="false" AccessLog="false" Verb="POST" Text="" ContentType="JSON" Route="unsubscribe" Notes="If subscriptionId is empty, all subscription of the authHash are removed." UserDefinedUrlMethod="false">
+      <Parameters>
+        <Parameter Name="request" DataType="Interfaces.PubSub.UnsubscribeRequest" IsRef="False" IsOut="False" DefaultValue="" Notes="" Type="RequestBody" Alias="" />
+      </Parameters>
+      <Headers />
+      <CachingOptions CachePerUser="false" OperationIsCached="false" OverrideDefaultCachingSettings="false" UseCustomExpirationMethod="false" ExpirationDays="0" ExpirationHours="0" ExpirationMinutes="3" ExpirationSeconds="0" ExpirationMilliseconds="0" CacheMode="None">function TimeSpan Expiration(
+	Interfaces.PubSub.UnsubscribeRequest request
+)
+{ 
+	 return CommonLib.Utilities.CreateTimeSpan(0, 1, 0); 
+}</CachingOptions>
+    </Operation>
+    <Operation Name="Publish" Description="" Datatype="void" OriginalName="" ClientType="" IsStatic="false" AccessLog="false" Verb="GET" Text="" ContentType="JSON" Route="" Notes="" UserDefinedUrlMethod="false">
+      <Parameters />
+      <Headers />
+      <CachingOptions CachePerUser="false" OperationIsCached="false" OverrideDefaultCachingSettings="false" UseCustomExpirationMethod="false" ExpirationDays="0" ExpirationHours="0" ExpirationMinutes="3" ExpirationSeconds="0" ExpirationMilliseconds="0" CacheMode="None">function TimeSpan Expiration()
+{ 
+	 return CommonLib.Utilities.CreateTimeSpan(0, 1, 0); 
+}</CachingOptions>
+    </Operation>
+  </Endpoint>
+  <RestEndpointDetails BaseUrl="https://94.70.243.21:20000" IgnoringNullFields="false" />
+</ExternalApi>

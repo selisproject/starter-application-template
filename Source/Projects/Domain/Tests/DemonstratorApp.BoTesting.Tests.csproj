@@ -1,0 +1,136 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <Copyright>Copyright © CLMS 2018</Copyright>
+    <Company>CLMS</Company>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <AssemblyName>DemonstratorApp.BoTesting.Tests</AssemblyName>
+    <RootNamespace>DemonstratorApp</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AgreementStatusTests.cs" />
+    <Compile Include="AgreementTests.cs" />
+    <Compile Include="AlgorithmCheckTests.cs" />
+    <Compile Include="AnnualTransactionVolumeTests.cs" />
+    <Compile Include="ApplicationClientTests.cs" />
+    <Compile Include="ApplicationLanguageTests.cs" />
+    <Compile Include="ApplicationOperationTests.cs" />
+    <Compile Include="ApplicationPermissionTests.cs" />
+    <Compile Include="ApplicationRoleTests.cs" />
+    <Compile Include="ApplicationSettingTests.cs" />
+    <Compile Include="ApplicationThemeTests.cs" />
+    <Compile Include="ApplicationUserActionTests.cs" />
+    <Compile Include="ApplicationUserClaimTests.cs" />
+    <Compile Include="ApplicationUserExternalProfileTests.cs" />
+    <Compile Include="ApplicationUserLoginTests.cs" />
+    <Compile Include="ApplicationUserTests.cs" />
+    <Compile Include="AuditEntityConfigurationTests.cs" />
+    <Compile Include="AuditLogEntryTests.cs" />
+    <Compile Include="AuditLogEntryTypeTests.cs" />
+    <Compile Include="AuditLogPropertyActionTypeTests.cs" />
+    <Compile Include="AuditPropertyConfigurationTests.cs" />
+    <Compile Include="BillOfLandingTests.cs" />
+    <Compile Include="BuyerStatisticTests.cs" />
+    <Compile Include="BuyerTests.cs" />
+    <Compile Include="CommercialAgreementTests.cs" />
+    <Compile Include="Common\BaseFixture.cs" />
+    <Compile Include="Common\NHConfigurator.cs" />
+    <Compile Include="Common\NHibernateFixture.cs" />
+    <Compile Include="Common\TestConnectionProvider.cs" />
+    <Compile Include="ContactTests.cs" />
+    <Compile Include="CreditNoteProductTests.cs" />
+    <Compile Include="CreditNoteTests.cs" />
+    <Compile Include="CustomsClearingDocumentationTests.cs" />
+    <Compile Include="DashboardTests.cs" />
+    <Compile Include="DataAvailabilityTests.cs" />
+    <Compile Include="DataQualityTests.cs" />
+    <Compile Include="DateTimeFormatTests.cs" />
+    <Compile Include="DeliveryNoteProductTests.cs" />
+    <Compile Include="DeliveryNoteTests.cs" />
+    <Compile Include="DocumentAgreementTests.cs" />
+    <Compile Include="FileDataTests.cs" />
+    <Compile Include="FinalAcceptanceCertificateTests.cs" />
+    <Compile Include="FundedTransactionTests.cs" />
+    <Compile Include="ImportedBuyerTests.cs" />
+    <Compile Include="IntermediaryTests.cs" />
+    <Compile Include="InvestorTests.cs" />
+    <Compile Include="InvoiceProductTests.cs" />
+    <Compile Include="InvoiceTests.cs" />
+    <Compile Include="LetterOfCreditTests.cs" />
+    <Compile Include="MapPointTests.cs" />
+    <Compile Include="MeanOfTransportTests.cs" />
+    <Compile Include="OrderPaymentTests.cs" />
+    <Compile Include="OrderProductTests.cs" />
+    <Compile Include="OrderStatusTests.cs" />
+    <Compile Include="OrderTests.cs" />
+    <Compile Include="PartialProofOfDeliveryTests.cs" />
+    <Compile Include="PaymentTests.cs" />
+    <Compile Include="PreferencesTests.cs" />
+    <Compile Include="ProductCategoryTests.cs" />
+    <Compile Include="ProfileSettingTests.cs" />
+    <Compile Include="ProfileTests.cs" />
+    <Compile Include="ProofOfDeliveryTests.cs" />
+    <Compile Include="SupplierBusinessStructureDataTests.cs" />
+    <Compile Include="SupplierContactInformationTests.cs" />
+    <Compile Include="SupplierEvaluationTests.cs" />
+    <Compile Include="SupplierExtraInformationTests.cs" />
+    <Compile Include="SupplierProductTests.cs" />
+    <Compile Include="SupplierReceivablesTests.cs" />
+    <Compile Include="SupplierStatisticTests.cs" />
+    <Compile Include="SupplierTests.cs" />
+    <Compile Include="SupplierTurnoverTests.cs" />
+    <Compile Include="SupplierUploadsTests.cs" />
+    <Compile Include="TransactionOverviewTests.cs" />
+    <Compile Include="TransactionPaymentTests.cs" />
+    <Compile Include="TransactionStatusTests.cs" />
+    <Compile Include="TransactionTests.cs" />
+    <Compile Include="TurnoverStatisticTests.cs" />
+    <Compile Include="TurnoverTests.cs" />
+    <Compile Include="WorkflowContextBaseTests.cs" />
+    <Compile Include="WorkflowScheduleTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\..\..\LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="hibernate.cfg.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="zAppDev.DotNet.Framework">
+      <Private>True</Private>
+      <HintPath>..\..\..\Projects\Lib\zAppDev.DotNet.Framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentNHibernate" Version="2.1.2" />
+    <PackageReference Include="NHibernate" Version="5.2.1" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Projects\Domain\POCO\DemonstratorApp.Backend.csproj" />
+  </ItemGroup>
+</Project>
